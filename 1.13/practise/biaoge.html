@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./vue.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.js"></script>
+    <style>
+        table{
+            background-color:rgb(240, 208, 240);
+            background-image: url('https://ftp.bmp.ovh/imgs/2021/01/1830f92e99777b9f.gif');
+            border-collapse:collapse;
+        }
+        td,th{
+            text-align: center;
+            line-height: 50px;
+            width: 250px;
+            height: 50px;
+            border: 1px solid sienna;
+            
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        
+        <button @click='aaa'>获取用户信息</button>
+        
+        <table v-show='messages'>
+            <th>宇宙唯一id</th>
+            <th>用户名</th>
+            <th>密码</th>
+            <th>备注</th>
+            <tr v-for='(item) in messages'>
+                <td v-for='(items) in item'>{{items}}</td>
+            </tr>
+        </table>
+    </div>
+    <script>
+        let vm = new Vue({
+            el:'#app',
+            data:{
+                messages:''
+            },
+            methods:{
+                aaa(){
+                  axios({
+                    url:'http://localhost:6969/vue' ,
+                    method:'get',
+                }).then(response =>{
+                    console.log(response.data);
+                    this.messages = response.data
+                }).catch(error =>{
+                    console.log(error);
+                })  
+                }
+            },
+            beforeCreate(){
+                console.log('进去beforeCreate');
+                
+            },
+            created(){
+                console.log('进去created');
+                
+            },
+            beforeMount(){
+                console.log('进去beforeMount');
+            },
+            mounted(){
+                console.log('进去mount');
+            },
+            beforeUpdate(){
+                console.log('修改前');
+            },
+            updated(){
+                console.log('修改后');
+            },
+            beforeDestroy(){
+                console.log('销毁前');
+            },
+            destroyed(){
+                console.log('销毁后');
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./vue.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.js"></script>
+    <style>
+        .list{
+            list-style:square;
+        }
+        .list1{
+            list-style:lower-greek;
+        }
+        .list2{
+            list-style:georgian;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" >
+        <p v-color>{{msg}}</p>
+        <p>{{copymsg}}</p>
+        <p>{{copymsg}}</p>
+        <p>{{copymsg}}</p>
+        
+        <br>
+        <p>{{num}}</p>
+        <!-- <button @click='aaa'>增加</button> -->
+        <button @click='copyaaa'>增加</button>
+
+        <button @click='bbb'>减少</button>
+        <p v-color2="'red'" v-if='title'>{{msg}}color2</p>
+        <br>
+        <input type="text" v-model='phone' v-mobile placeholder="请输入正确的电话号码">
+        <ul>
+            <li v-for='(item,index) in message' :class='isList'>{{item.username}}</li>
+        </ul>
+        <br>
+        <button @click='listStyle'>变列表样式</button>
+        <br>
+        <br>
+        <button @click='add'>发送</button>
+        <p >{{title}}</p>
+
+        <input type="text" v-model='first'>
+        <input type="text" v-model='second'>
+        <input v-model='result'>
+    </div>
+    <script>
+
+        Vue.directive('color',{
+            inserted:function(el){
+                el.style.color = 'purple'
+            }
+        })
+
+        Vue.directive('color2',{
+            inserted:function(el,binding){
+                el.style.color = binding.value
+            }
+        })
+
+        let mymixin = {
+            // created:function(){
+            //     this.aaa()
+            // },
+            methods:{
+                bbb(){
+                    this.num--
+                },
+                add(){
+                    axios({
+                        url:'http://localhost:6969/vue/add',
+                        method:'post',
+                        data:{
+                            username:'laoli'
+                        }
+                    }).then(response=>{
+                        console.log(response);
+                        this.title = response.data.msg
+                    }).catch(error=>{
+                        console.log(error);
+                    })
+                }
+            }
+        }
+
+        let vm = new Vue({
+            mixins:[mymixin],
+            el:'#app',
+            data:{
+                msg:'今天是上分的好日子',
+                num:0,
+                phone:'',
+                message:'',
+                title:'',
+                isList:'list',
+                first:'',
+                second:'',
+                result:''
+            },
+            watch:{
+                first(val){
+                    this.result = (val-0) + (this.second-0)
+                },
+                second(val){
+                    this.result = (val-0) + (this.first-0)
+                }
+            },
+            methods:{
+                aaa(){
+                    console.log('进入aaa方法里面了');
+                    this.num++
+                },
+                listStyle(){
+                    if(this.isList == 'list'){
+                        this.isList = 'list1'
+                    }else if(this.isList == 'list1'){
+                        this.isList = 'list2'
+                    }else{
+                        this.isList = 'list'
+                    }
+                }
+            },
+            computed:{
+                copymsg(){
+                    console.log('进入复制的msg里面了');
+                    return this.msg
+                },
+                copyaaa(){
+                    console.log('进入复制的aaa方法了');
+                    return this.aaa
+                }
+            },
+            directives:{
+                mobile:{
+                   update:function(el){
+                        let reg = /^1[3-9]\d{9}$/
+                        if(reg.test(el.value)){
+                            el.style.color = 'green';
+                        }else{
+                            el.style.color = 'red'
+                        }
+                    } 
+                }
+                
+            },
+            beforeCreate(){
+                console.log(this.msg);//undefined
+            },
+            created(){
+                console.log(this.msg);//正常显示
+                axios({
+                    url:'http://localhost:6969/vue',
+                    method:'get',
+                    params:{
+                        username:'laowang'
+                    }
+                }).then(response=>{
+                    console.log(response);
+                    this.message = response.data
+                }).catch(error=>{
+                    console.log(error);
+                })
+            },
+            beforeMount(){
+                this.msg = '我柜子动了我不玩了'
+            },
+            mounted(){
+                console.log(this.msg);
+            },
+            beforeUpdate(){
+                console.log('进入修改前');
+            },
+            updated(){
+                console.log('修改完成');
+            },
+            beforeDestroy(){
+                console.log('准备销毁');
+            },
+            destroyed(){
+                console.log('销毁完成');
+            }
+        })
+    </script>
+</body>
+</html>
